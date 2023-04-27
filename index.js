@@ -1,14 +1,27 @@
 import express from "express";
+import bodyparser from 'body-parser'
+
 const app = express();
 
 let count = 0;
 const logs = [];
 
-app.use(express.json());
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   count++;
   res.send(logs);
+});
+
+app.post("/", (req, res) => {
+  count++;
+  logs.push({
+    date: new Date(),
+    body: req.body,
+    headers: req.headers,
+  });
+  res.send({ test: "yes" });
 });
 
 app.get("/reset", (req, res) => {
@@ -17,11 +30,6 @@ app.get("/reset", (req, res) => {
   res.send({ message: "clear" });
 });
 
-app.post("/", (req, res) => {
-  count++;
-  logs.push({ date: new Date(), body: req.body, headers: req.headers });
-  res.send({ test: "yes" });
-});
 
 app.get("/json", (req, res) => {
   res.json({ "Choo Choo": "Welcome to your Express app 🚅" });
